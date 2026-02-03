@@ -1,816 +1,644 @@
-# Weekly Implementation Roadmap - Customer Segmentation & RFM Dashboard
+# WEEK-BY-WEEK ROADMAP - Global Superstore RFM Analysis (CORRECTED)
 
-## 📅 4-5 Week Project Timeline
+## 🎯 PROJECT OVERVIEW
 
-Complete step-by-step breakdown of what to do each week to stay on track.
-
----
-
-## WEEK 1: Foundation & Data Preparation
-
-### Days 1-2: Environment Setup & Dataset Download
-**Time Allocation:** 4-6 hours
-
-**Tasks:**
-- [ ] Install Power BI Desktop (latest version)
-- [ ] Create Kaggle account (if not already done)
-- [ ] Download Global Superstore dataset
-  - Download link: https://www.kaggle.com/datasets/shekpaul/global-superstore/data
-  - File: Global_Superstore.xls (~18MB)
-- [ ] Extract/save dataset in project folder
-- [ ] Create GitHub repository for project
-  - Repo name: `customer-segmentation-rfm-dashboard`
-  - Initialize with README.md
-
-**Deliverables:**
-- ✅ Folder structure created locally
-- ✅ Dataset downloaded and verified (3 sheets: Orders, People, Returns)
-- ✅ GitHub repo initialized
-
-**Time Check:** You should finish by Day 2 EOD
+**Duration:** 4 weeks (28 days)
+**Goal:** Build complete RFM Customer Segmentation Dashboard in Power BI
+**Dataset:** Global Superstore (Orders, People, Returns - NO separate Customer table!)
 
 ---
 
-### Days 3-4: Load Data & Initial Transformation
-**Time Allocation:** 6-8 hours
+## 📅 WEEK 1: DATA FOUNDATION (Days 1-7)
+
+### **Day 1: Project Setup & Dataset Download**
 
 **Tasks:**
-- [ ] Open Power BI Desktop
-- [ ] Load data from Excel
-  1. File → Get Data → Excel
-  2. Select Global_Superstore.xls
-  3. Load Orders, People, Returns tables
-  4. Click Transform Data
+- [ ] Download Global Superstore from Kaggle
+- [ ] Extract and open `Global_Superstore.xls`
+- [ ] Verify 3 sheets exist: Orders, People, Returns
+- [ ] Create project folder structure
 
-- [ ] In Power Query Editor:
-  1. **Orders Table:**
-     - Check all columns are loaded (29 columns)
-     - Remove duplicate rows
-     - Set correct data types:
-       * Order Date: Date
-       * Sales: Decimal
-       * Quantity: Whole Number
-       * Profit: Decimal
-     - Create new column: `Order Year` = YEAR([Order Date])
-     - Create new column: `Order Month` = MONTH([Order Date])
-     - Remove unnecessary columns (Postal Code, etc. - keep essential ones)
+**Verification:**
+- Orders table has ~51,000 rows
+- Customer ID column exists IN Orders table
+- Orders table has columns: Order Date, Sales, Profit, Customer ID
 
-  2. **People Table:**
-     - Verify Region and Manager columns
-     - Remove duplicates
-
-  3. **Returns Table:**
-     - Check Order ID and Reason columns
-     - Remove any blanks
-
-- [ ] Load all tables into Power BI model
-  1. Click Close & Apply
-  2. Verify all 3 tables appear in Fields pane
-
-**Deliverables:**
-- ✅ Data loaded into Power BI
-- ✅ Data types corrected
-- ✅ Duplicate rows removed
-- ✅ All 3 tables visible in model
-
-**Common Issues:**
-- ❌ Columns not showing? Scroll right in Power Query preview
-- ❌ Data type errors? Right-click column → Change Type
-- ❌ Memory issues? Close other applications, restart Power BI
-
-**Time Check:** You should finish by Day 4 EOD
+**Time:** 1 hour
 
 ---
 
-### Days 5-7: Relationships & Date Table
-**Time Allocation:** 4-6 hours
+### **Day 2: Understand the Dataset Structure**
 
 **Tasks:**
-- [ ] Create Date Table (in Power BI, not Power Query)
-  1. Modeling tab → New Table
-  2. Paste DAX formula:
-  ```
-  DateTable = CALENDAR(MIN(Orders[Order Date]), MAX(Orders[Order Date]))
-  ```
-  3. Add calculated columns (see DAX guide for all formulas):
-     - Year, Month, MonthName, Quarter, DayOfWeek, etc.
+- [ ] Open Orders sheet - examine all 25 columns
+- [ ] Identify customer columns: Customer ID, Customer Name, Segment
+- [ ] Note: Customer data is IN Orders table, not separate table!
+- [ ] Review People sheet (24 regional managers)
+- [ ] Review Returns sheet (returned orders)
 
-- [ ] Set relationships in Model View
-  1. View → Model
-  2. Create relationship: Orders[Customer ID] → Customer[Customer ID]
-     (Right-click Orders table → Manage Relationships)
-  3. Create relationship: Orders[Order Date] → DateTable[Date]
-  4. Create relationship: Orders[Region] → People[Region]
-  5. Create relationship: Returns[Order ID] → Orders[Order ID]
+**Questions to answer:**
+- How many unique customers? (use Excel: =COUNTA(UNIQUE(range)))
+- Date range of orders? (2012-2015)
+- What are the segments? (Consumer, Corporate, Home Office)
 
-- [ ] Verify relationships
-  1. Check Model View visually
-  2. Ensure all relationships are 1:Many (except date)
-  3. Look for any circular dependencies (shown in red)
-
-- [ ] Test relationships
-  1. Go to Report View
-  2. Create sample table visual with fields from different tables
-  3. Verify data displays correctly (no errors)
-
-**Deliverables:**
-- ✅ DateTable created with all calculated columns
-- ✅ All relationships established correctly
-- ✅ No circular dependencies
-- ✅ Test visual shows correct data
-
-**Time Check:** Finish by EOW (Friday)
-
-**End of Week 1 Checklist:**
-- ✅ Data loaded into Power BI
-- ✅ Data cleaned and types set
-- ✅ Date table created
-- ✅ Relationships established
-- ✅ Model validated with test visual
+**Time:** 2 hours
 
 ---
 
-## WEEK 2: RFM Calculations & Segmentation
-
-### Days 8-9: Create RFM Calculation Table
-**Time Allocation:** 4-6 hours
+### **Day 3-4: Load Data into Power BI**
 
 **Tasks:**
-- [ ] Create RFM_Calculations table
-  1. Modeling → New Table
-  2. Paste DAX formula from DAX guide (RFM_Calculations table)
-  3. Let it run (may take 30 seconds for large dataset)
-  4. Verify table shows all customer records
 
-- [ ] Check RFM_Calculations table
-  1. Click on table in Fields pane
-  2. View in Model
-  3. Should show: Customer ID, Recency, Frequency, Monetary columns
+**Day 3:**
+- [ ] Open Power BI Desktop (download if needed)
+- [ ] File → Get Data → Excel
+- [ ] Select all 3 sheets: Orders, People, Returns
+- [ ] Click "Transform Data"
 
-**Deliverables:**
-- ✅ RFM_Calculations table created
-- ✅ Table contains all unique customers
-- ✅ Recency, Frequency, Monetary values calculated
+**Day 4:**
+- [ ] In Power Query - Orders table:
+  - Change Order Date to Date type
+  - Change Sales to Decimal Number
+  - Change Profit to Decimal Number
+  - Remove Row ID column
+  - Remove Postal Code (often has errors)
+- [ ] Verify Customer ID column exists (it's here!)
+- [ ] Click "Close & Apply"
 
-**Time Check:** Finish by Day 9 EOD
+**Verification:**
+- All 3 tables loaded successfully
+- Orders table shows correct data types
+- No errors in Applied Steps
+
+**Time:** 3 hours
 
 ---
 
-### Days 10-11: Add RFM Scoring Formulas
-**Time Allocation:** 4-5 hours
+### **Day 5-6: Create DateTable**
 
 **Tasks:**
-- [ ] Add calculated columns to RFM_Calculations table
-  
-  1. Right-click RFM_Calculations → New Column
-  2. Add R_Score column (Recency scoring formula from DAX guide)
-     - Formula assigns 1-5 score based on days since purchase
-  3. Test: You should see scores 1-5 in new column
-  
-  4. Add F_Score column (Frequency scoring)
-     - Formula assigns 1-5 score based on purchase count
-  5. Test: You should see scores 1-5
-  
-  6. Add M_Score column (Monetary scoring)
-     - Formula assigns 1-5 score based on total spent
-  7. Test: You should see scores 1-5
 
-- [ ] Verify scoring logic
-  1. Sort RFM_Calculations table by Recency ascending
-  2. Check: Most recent purchases (low days) should have R_Score=5
-  3. Sort by Frequency descending
-  4. Check: Most frequent customers should have F_Score=5
-  5. Sort by Monetary descending
-  6. Check: Highest spenders should have M_Score=5
+**Day 5:**
+- [ ] Go to Modeling → New Table
+- [ ] Create DateTable with CALENDAR function
+- [ ] Add Year, Month, Quarter columns
+- [ ] Mark as Date Table
 
-**Deliverables:**
-- ✅ R_Score column added with values 1-5
-- ✅ F_Score column added with values 1-5
-- ✅ M_Score column added with values 1-5
-- ✅ All scores verified as correct
+**DateTable DAX:**
+```DAX
+DateTable = 
+CALENDAR(
+    DATE(2012, 1, 1),
+    DATE(2015, 12, 31)
+)
+```
 
-**Common Issues:**
-- ❌ Scores all showing 1? Check IF ISBLANK logic
-- ❌ Scores showing 0? May indicate NULL values in source data
-- ❌ Formula error? Copy-paste from DAX guide carefully
+**Add columns:**
+```DAX
+Year = YEAR(DateTable[Date])
+Month = MONTH(DateTable[Date])
+MonthName = FORMAT(DateTable[Date], "mmmm")
+Quarter = "Q" & ROUNDUP(MONTH(DateTable[Date])/3, 0)
+```
 
-**Time Check:** Finish by Day 11 EOD
+**Day 6:**
+- [ ] Mark DateTable as Date Table
+- [ ] Create relationship: Orders[Order Date] → DateTable[Date]
+- [ ] Test: Create simple visual with Year and Sales
+
+**Verification:**
+- DateTable has 1,461 rows (2012-2015)
+- Relationship created successfully
+- Visual shows data by year
+
+**Time:** 3 hours
 
 ---
 
-### Days 12-14: Add Segmentation Logic
-**Time Allocation:** 5-7 hours
+### **Day 7: Create Base Relationships**
 
 **Tasks:**
-- [ ] Add Segment column to RFM_Calculations
-  1. Right-click RFM_Calculations → New Column
-  2. Paste Segment formula from DAX guide
-  3. Let formula process
+- [ ] Go to Model View
+- [ ] Create relationship: Orders[Region] → People[Region]
+- [ ] Create relationship: Orders[Order ID] → Returns[Order ID]
+- [ ] Verify all 3 relationships work
 
-- [ ] Verify segmentation
-  1. Create table visual:
-     * Rows: Segment
-     * Values: COUNT of Customer ID
-  2. Should see all 7-8 segment types:
-     - Champions
-     - Loyal Customers
-     - At-Risk
-     - Lost Customers
-     - New Customers
-     - Potential Loyalists
-     - Need Attention
-     - Other
+**Final Model Check:**
+- Orders table is center (fact table)
+- DateTable connected via Order Date
+- People connected via Region
+- Returns connected via Order ID
 
+**Deliverable:** Working data model with 4 tables and 3 relationships
+
+**Time:** 1 hour
+
+---
+
+## 📊 WEEK 2: RFM CALCULATIONS (Days 8-14)
+
+### **Day 8-9: Create RFM_Calculations Table**
+
+**Tasks:**
+
+**Day 8:**
+- [ ] Understand RFM concept:
+  - R = Recency (days since last purchase)
+  - F = Frequency (number of orders)
+  - M = Monetary (total revenue)
+- [ ] Plan: Extract unique customers FROM Orders table
+
+**Day 9:**
+- [ ] Go to Modeling → New Table
+- [ ] Create RFM_Calculations table using SUMMARIZE
+- [ ] Verify table created with correct columns
+
+**RFM_Calculations DAX:**
+```DAX
+RFM_Calculations = 
+VAR MaxDate = MAX(Orders[Order Date])
+RETURN
+ADDCOLUMNS(
+    SUMMARIZE(
+        Orders,
+        Orders[Customer ID],
+        Orders[Customer Name]
+    ),
+    "Recency", INT(MaxDate - CALCULATE(MAX(Orders[Order Date]))),
+    "Frequency", CALCULATE(COUNTROWS(Orders)),
+    "Monetary", CALCULATE(SUM(Orders[Sales]))
+)
+```
+
+**Verification:**
+- Table has 5 columns: Customer ID, Customer Name, Recency, Frequency, Monetary
+- ~3,000-5,000 rows (unique customers)
+- No blanks in Recency, Frequency, Monetary
+
+**Time:** 4 hours
+
+---
+
+### **Day 10: Add R_Score Column**
+
+**Tasks:**
+- [ ] Understand scoring logic (1-5 scale)
+- [ ] Right-click RFM_Calculations → New Column
+- [ ] Create R_Score column
+- [ ] Verify scores are 1-5
+
+**R_Score DAX:**
+```DAX
+R_Score = 
+IF(
+    ISBLANK(RFM_Calculations[Recency]),
+    0,
+    SWITCH(
+        TRUE(),
+        RFM_Calculations[Recency] <= 30, 5,
+        RFM_Calculations[Recency] <= 90, 4,
+        RFM_Calculations[Recency] <= 180, 3,
+        RFM_Calculations[Recency] <= 365, 2,
+        1
+    )
+)
+```
+
+**Verification:**
+- R_Score column shows values 1-5
+- No blanks or errors
+- Most customers have score 1-2 (older dataset)
+
+**Time:** 1 hour
+
+---
+
+### **Day 11: Add F_Score Column**
+
+**Tasks:**
+- [ ] Create F_Score column
+- [ ] Verify scores distribution
+
+**F_Score DAX:**
+```DAX
+F_Score = 
+IF(
+    ISBLANK(RFM_Calculations[Frequency]),
+    0,
+    SWITCH(
+        TRUE(),
+        RFM_Calculations[Frequency] >= 12, 5,
+        RFM_Calculations[Frequency] >= 8, 4,
+        RFM_Calculations[Frequency] >= 5, 3,
+        RFM_Calculations[Frequency] >= 2, 2,
+        1
+    )
+)
+```
+
+**Verification:**
+- F_Score shows 1-5 values
+- Most customers score 1-2 (low frequency)
+
+**Time:** 1 hour
+
+---
+
+### **Day 12: Add M_Score Column**
+
+**Tasks:**
+- [ ] Create M_Score column
+- [ ] Verify monetary scoring
+
+**M_Score DAX:**
+```DAX
+M_Score = 
+IF(
+    ISBLANK(RFM_Calculations[Monetary]),
+    0,
+    SWITCH(
+        TRUE(),
+        RFM_Calculations[Monetary] >= 5000, 5,
+        RFM_Calculations[Monetary] >= 2000, 4,
+        RFM_Calculations[Monetary] >= 500, 3,
+        RFM_Calculations[Monetary] >= 100, 2,
+        1
+    )
+)
+```
+
+**Verification:**
+- M_Score shows 1-5 values
+- Distribution makes sense with Sales data
+
+**Time:** 1 hour
+
+---
+
+### **Day 13-14: Add Segment Column**
+
+**Tasks:**
+
+**Day 13:**
+- [ ] Understand 7 segment logic
+- [ ] Create Segment calculated column
+- [ ] Test with small sample
+
+**Day 14:**
+- [ ] Verify all 7 segments appear
 - [ ] Check segment distribution
-  1. Expected approximate distribution:
-     - Loyal Customers: ~45-50% (largest group)
-     - At-Risk: ~10-15%
-     - Champions: ~5-10%
-     - New Customers: ~10-15%
-     - Lost Customers: ~5-10%
-     - Others: remainder
+- [ ] Create test visual: Segment + Count of Customer ID
 
-- [ ] Test segment assignments
-  1. Sort by R_Score, F_Score, M_Score all descending
-  2. Top customer(s) should be "Champions"
-  3. Sort by R_Score ascending (oldest customers)
-  4. Should see "Lost Customers" segment
+**Segment DAX:**
+```DAX
+Segment = 
+SWITCH(
+    TRUE(),
+    RFM_Calculations[R_Score] >= 4 && RFM_Calculations[F_Score] >= 4 && RFM_Calculations[M_Score] >= 4, "Champions",
+    RFM_Calculations[R_Score] >= 3 && RFM_Calculations[F_Score] >= 3 && RFM_Calculations[M_Score] >= 3, "Loyal Customers",
+    RFM_Calculations[R_Score] < 3 && RFM_Calculations[F_Score] >= 4 && RFM_Calculations[M_Score] >= 3, "At-Risk",
+    RFM_Calculations[R_Score] < 2 && RFM_Calculations[F_Score] < 3 && RFM_Calculations[M_Score] < 3, "Lost Customers",
+    RFM_Calculations[R_Score] >= 4 && RFM_Calculations[F_Score] < 3 && RFM_Calculations[M_Score] < 3, "New Customers",
+    RFM_Calculations[R_Score] >= 2 && RFM_Calculations[R_Score] < 4 && RFM_Calculations[F_Score] >= 3 && RFM_Calculations[M_Score] >= 3, "Potential Loyalists",
+    RFM_Calculations[R_Score] < 3 && RFM_Calculations[F_Score] >= 3 && RFM_Calculations[M_Score] < 3, "Need Attention",
+    "Other"
+)
+```
 
-**Deliverables:**
-- ✅ Segment column created
-- ✅ All 7 segment types present in data
-- ✅ Segmentation logic verified
-- ✅ Distribution looks reasonable
+**Create Relationship:**
+- [ ] Go to Model View
+- [ ] Drag Orders[Customer ID] → RFM_Calculations[Customer ID]
 
-**Time Check:** Finish by Friday EOD
+**Verification:**
+- All 7 segments show up
+- Segment distribution reasonable
+- Final Model View shows 5 tables total
 
-**End of Week 2 Checklist:**
-- ✅ RFM calculation table created
-- ✅ R, F, M scores calculated (1-5 scale)
-- ✅ Segment classification complete
-- ✅ All 7 customer segments identified
-- ✅ Data ready for visualization
+**Deliverable:** Complete RFM_Calculations table with scores and segments
+
+**Time:** 3 hours
 
 ---
 
-## WEEK 3: Dashboard Pages & Visualizations
+## 📈 WEEK 3: CREATE MEASURES (Days 15-21)
 
-### Days 15-16: Page 1 - Executive Summary
-**Time Allocation:** 4-6 hours
+### **Day 15-16: Core Business Measures**
 
 **Tasks:**
-- [ ] Create new page (right-click page tab → New page)
-  - Rename to "Executive Summary"
 
+**Day 15:**
+```DAX
+Total_Customers = DISTINCTCOUNT(Orders[Customer ID])
+Total_Revenue = SUM(Orders[Sales])
+Total_Orders = COUNTROWS(Orders)
+```
+
+**Day 16:**
+```DAX
+Average_Order_Value = 
+DIVIDE([Total_Revenue], [Total_Orders], 0)
+
+Average_Customer_Value = 
+DIVIDE([Total_Revenue], [Total_Customers], 0)
+
+Profit_Margin_Percent = 
+VAR TotalProfit = SUM(Orders[Profit])
+VAR TotalSales = [Total_Revenue]
+RETURN
+IF(TotalSales = 0, 0, DIVIDE(TotalProfit, TotalSales, 0))
+```
+
+**Test Each Measure:**
+- Create card visual
+- Drag measure onto card
+- Verify value makes sense
+
+**Time:** 3 hours
+
+---
+
+### **Day 17-18: RFM Aggregate Measures**
+
+**Day 17:**
+```DAX
+Avg_Recency_Days = AVERAGE(RFM_Calculations[Recency])
+Avg_Frequency = AVERAGE(RFM_Calculations[Frequency])
+Avg_Monetary = AVERAGE(RFM_Calculations[Monetary])
+```
+
+**Day 18:**
+```DAX
+Champions_Count = 
+CALCULATE(
+    DISTINCTCOUNT(RFM_Calculations[Customer ID]),
+    RFM_Calculations[Segment] = "Champions"
+)
+
+Champions_Revenue = 
+CALCULATE(
+    [Total_Revenue],
+    RFM_Calculations[Segment] = "Champions"
+)
+
+Champions_Revenue_Pct = 
+DIVIDE([Champions_Revenue], [Total_Revenue], 0)
+```
+
+**Test:**
+- Create cards for Champions metrics
+- Verify counts and percentages
+
+**Time:** 3 hours
+
+---
+
+### **Day 19-20: Segment-Specific Measures**
+
+**Day 19:**
+```DAX
+AtRisk_Count = 
+CALCULATE(
+    DISTINCTCOUNT(RFM_Calculations[Customer ID]),
+    RFM_Calculations[Segment] = "At-Risk"
+)
+
+Lost_Count = 
+CALCULATE(
+    DISTINCTCOUNT(RFM_Calculations[Customer ID]),
+    RFM_Calculations[Segment] = "Lost Customers"
+)
+
+New_Customers_Count = 
+CALCULATE(
+    DISTINCTCOUNT(RFM_Calculations[Customer ID]),
+    RFM_Calculations[Segment] = "New Customers"
+)
+```
+
+**Day 20:**
+- [ ] Create measures for remaining segments
+- [ ] Test all measures in visuals
+- [ ] Organize measures in folders
+
+**Time:** 3 hours
+
+---
+
+### **Day 21: Measure Organization & Testing**
+
+**Tasks:**
+- [ ] Create measure folders:
+  - "Core Metrics"
+  - "RFM Averages"
+  - "Segment Metrics"
+- [ ] Test each measure in appropriate visual
+- [ ] Document measure purposes
+- [ ] Create calculation reference sheet
+
+**Deliverable:** 15+ working measures organized in folders
+
+**Time:** 2 hours
+
+---
+
+## 🎨 WEEK 4: BUILD DASHBOARD (Days 22-28)
+
+### **Day 22: Dashboard Planning**
+
+**Tasks:**
+- [ ] Sketch dashboard layout on paper
+- [ ] Decide on 6-8 key visuals
+- [ ] Plan color scheme
+- [ ] Identify KPIs for top of page
+
+**Suggested Layout:**
+```
++--------------------------------------------------+
+|  KPI Cards: Total Customers | Revenue | Orders  |
++--------------------------------------------------+
+|  Segment Distribution (Donut) | RFM Heatmap      |
++--------------------------------------------------+
+|  Revenue by Segment (Bar) | Customers by Segment|
++--------------------------------------------------+
+|  Revenue Trend (Line) | Top Customers (Table)   |
++--------------------------------------------------+
+```
+
+**Time:** 2 hours
+
+---
+
+### **Day 23-24: Build Core Visuals**
+
+**Day 23:**
 - [ ] Add KPI cards at top
-  1. Visual → Card
-  2. Total Customers measure
-  3. Total Revenue measure
-  4. Average Order Value measure
-  5. Profit Margin % measure
-  6. Format: Large font, prominent placement
+- [ ] Create segment distribution donut chart
+- [ ] Create revenue by segment bar chart
 
-- [ ] Add Donut charts (left side)
-  1. Visual → Donut Chart
-  2. Legend (Items): Segment
-  3. Values: DISTINCTCOUNT(Customer ID)
-  4. Title: "Customers by Segment"
-  5. Add data labels with percentages
+**Day 24:**
+- [ ] Create RFM scatter plot (R vs M, size=F)
+- [ ] Create customers by segment column chart
+- [ ] Add slicers: Year, Segment, Region
 
-  6. Copy this chart
-  7. Change Values to [Total_Revenue]
-  8. Rename: "Revenue by Segment"
-
-- [ ] Add Clustered Column chart (center)
-  1. Axis: Segment
-  2. Values: DISTINCTCOUNT(Customer ID)
-  3. Add second value: SUM(Orders[Sales])
-  4. Title: "Segment Performance"
-
-- [ ] Add Table visual (right)
-  1. Fields: Segment, Count, Revenue, Avg Value, Avg Recency
-  2. Format: Alternating row colors, headers bold
-
-- [ ] Add Slicers
-  1. Visual → Slicer
-  2. Field: Orders[Order Date] → select Date hierarchy → Year/Month
-  3. Display as dropdown
-  4. Position at top of page
-
-  5. Add Region slicer
-  6. Add Category slicer
-  7. Connect all visuals to slicers
-
-**Deliverables:**
-- ✅ Executive Summary page created
-- ✅ 4 KPI cards display correctly
-- ✅ 2 donut charts show segment breakdown
-- ✅ Column chart shows performance
-- ✅ Table shows segment metrics
-- ✅ 3 slicers filtering all visuals
-
-**Time Check:** Finish by Day 16 EOD
+**Time:** 4 hours
 
 ---
 
-### Days 17-18: Page 2 - RFM Matrix
-**Time Allocation:** 4-6 hours
+### **Day 25-26: Advanced Visuals**
+
+**Day 25:**
+- [ ] Create revenue trend line chart (by month)
+- [ ] Create top 10 customers table
+- [ ] Create segment performance matrix
+
+**Day 26:**
+- [ ] Create geographic map (if needed)
+- [ ] Create segment comparison table
+- [ ] Add conditional formatting
+
+**Time:** 4 hours
+
+---
+
+### **Day 27: Dashboard Formatting**
 
 **Tasks:**
-- [ ] Create new page "RFM Analysis"
+- [ ] Apply consistent color scheme
+- [ ] Format all titles and labels
+- [ ] Align and size all visuals
+- [ ] Add background and borders
+- [ ] Configure slicer interactions
+- [ ] Test all filters and interactions
 
-- [ ] Create RFM Scatter Plot (main visual)
-  1. Visual → Scatter Chart
-  2. X Axis: [Frequency] from RFM_Calculations
-  3. Y Axis: [Monetary] from RFM_Calculations
-  4. Size: [Recency] (smaller bubble = more recent)
-  5. Color: Segment (use color for each segment)
-  6. Tooltip: Add Customer ID, R/F/M scores
-  7. Title: "RFM Matrix - Frequency vs Monetary"
-
-- [ ] Create secondary Scatter (Recency vs Frequency)
-  1. Copy previous chart
-  2. X Axis: [Recency]
-  3. Y Axis: [Frequency]
-  4. Title: "Recency vs Frequency"
-
-- [ ] Add RFM Score Distribution (Stacked Bar)
-  1. Visual → Stacked Bar Chart
-  2. X Axis: Segment
-  3. Y Axis: Count of R_Score, F_Score, M_Score
-  4. Legend: Shows R, F, M
-  5. Title: "RFM Score Distribution by Segment"
-
-- [ ] Add Summary Table
-  1. Visual → Table
-  2. Columns: Segment, Count, Avg Recency, Avg Frequency, Avg Monetary, % Revenue
-  3. Sort by Avg Monetary descending
-  4. Format currency values
-
-**Deliverables:**
-- ✅ RFM Analysis page created
-- ✅ Scatter plot showing F vs M
-- ✅ Scatter plot showing R vs F
-- ✅ RFM score distribution visible
-- ✅ Summary table with metrics
-
-**Time Check:** Finish by Day 18 EOD
+**Time:** 3 hours
 
 ---
 
-### Days 19-21: Page 3 - Segmentation Details
-**Time Allocation:** 5-7 hours
+### **Day 28: Testing & Documentation**
 
 **Tasks:**
-- [ ] Create new page "Segment Details"
+- [ ] Test all visuals with different filters
+- [ ] Verify calculations are correct
+- [ ] Check for data quality issues
+- [ ] Create user guide document
+- [ ] Export dashboard as PDF
+- [ ] Save .pbix file
 
-- [ ] Add Segment Slicer at top
-  1. Visual → Slicer
-  2. Field: Segment from RFM_Calculations
-  3. Display as buttons
-  4. Allow multi-select
+**Final Checklist:**
+- [ ] All measures working
+- [ ] All relationships correct
+- [ ] No errors in visuals
+- [ ] Dashboard is intuitive
+- [ ] Performance is good (loads quickly)
 
-- [ ] Add Segment KPIs (4 cards)
-  1. Customers in Segment
-  2. Revenue from Segment
-  3. Avg Order Value
-  4. % of Total Revenue
+**Deliverable:** Complete RFM Customer Segmentation Dashboard
 
-- [ ] Create Customer Details Table
-  1. Rows: Customer ID
-  2. Values: Last Purchase Date, Purchase Count, Total Spent, R_Score, F_Score, M_Score, City, Country
-  3. Enable search functionality
-  4. Add conditional formatting to scores (color scale 1-5)
-
-- [ ] Add Geographic Map
-  1. Visual → Map
-  2. Location: Country/City
-  3. Color saturation: Customer Count or Revenue
-  4. Title: "Customer Distribution by Location"
-
-- [ ] Add Product Category Chart
-  1. Visual → Clustered Bar
-  2. Axis: Category
-  3. Values: Sum of Sales
-  4. Filter: Show top 10
-  5. Title: "Top Categories by Segment"
-
-**Deliverables:**
-- ✅ Segment Details page created
-- ✅ Segment selector slicer added
-- ✅ 4 KPI cards show segment metrics
-- ✅ Customer table displays detailed records
-- ✅ Geographic map shows distribution
-- ✅ Product category chart shows preferences
-
-**Time Check:** Finish by Friday EOD
-
-**End of Week 3 Checklist:**
-- ✅ 3 dashboard pages created
-- ✅ 10+ visualizations designed
-- ✅ Slicers and filters working
-- ✅ All pages formatted professionally
-- ✅ Dashboard is interactive
+**Time:** 3 hours
 
 ---
 
-## WEEK 4: Advanced Features & Polish
+## ✅ FINAL MODEL STRUCTURE
 
-### Days 22-23: Page 4 - Time Series & Trends
-**Time Allocation:** 4-5 hours
+**Your Power BI Model will have:**
 
-**Tasks:**
-- [ ] Create new page "Trends & Growth"
+```
+5 TABLES:
+1. Orders (fact table - 51,290 rows)
+   - Contains: Customer ID, Customer Name, Sales, Dates, etc.
+   
+2. DateTable (dimension - 1,461 rows)
+   - Calendar table for time intelligence
+   
+3. People (dimension - 24 rows)
+   - Regional sales managers
+   
+4. Returns (dimension - 1,079 rows)
+   - Returned orders tracking
+   
+5. RFM_Calculations (analysis table - ~3,000-5,000 rows)
+   - Customer-level RFM scores and segments
 
-- [ ] Revenue Trend by Segment (Line Chart)
-  1. Visual → Line Chart
-  2. Axis: Month (from DateTable)
-  3. Lines: Segment (multiple lines, one per segment)
-  4. Values: Sum of Sales
-  5. Title: "Monthly Revenue Trend by Segment"
-  6. Add forecasting: Analytics pane → Forecast
+4 RELATIONSHIPS:
+- Orders[Order Date] → DateTable[Date]
+- Orders[Region] → People[Region]
+- Orders[Order ID] → Returns[Order ID]
+- Orders[Customer ID] → RFM_Calculations[Customer ID]
 
-- [ ] Customer Growth (Column Chart)
-  1. Axis: Month
-  2. Columns: Count of Customers by Segment
-  3. Stacked column
-  4. Title: "Customer Count by Segment Over Time"
-
-- [ ] Churn Analysis (Column Chart)
-  1. Show customers lost per month
-  2. Axis: Month
-  3. Values: Count of customers who moved to "Lost"
-  4. Title: "Customer Churn by Month"
-
-- [ ] New vs Returning (Area Chart)
-  1. Axis: Month
-  2. Area 1: New customers
-  3. Area 2: Returning customers
-  4. Stacked area
-  5. Title: "New vs Returning Customers"
-
-**Deliverables:**
-- ✅ Trends page created
-- ✅ Revenue trend line chart shows all segments
-- ✅ Customer growth stacked column visible
-- ✅ Churn analysis chart shows losses
-- ✅ New vs Returning area chart visible
-
-**Time Check:** Finish by Day 23 EOD
+15+ MEASURES:
+- Business KPIs (Revenue, Customers, Orders)
+- RFM Averages (Avg Recency, Frequency, Monetary)
+- Segment Metrics (Champions, At-Risk, Lost counts)
+```
 
 ---
 
-### Days 24-25: Page 5 - Insights & Recommendations
-**Time Allocation:** 3-4 hours
+## 🎯 SUCCESS METRICS
 
-**Tasks:**
-- [ ] Create new page "Insights & Recommendations"
+**By end of Week 1:**
+- ✅ All data loaded correctly
+- ✅ DateTable created and marked
+- ✅ Base relationships established
+- ✅ No Customer table confusion
 
-- [ ] Add Key Insights Text Boxes
-  1. Visual → Text Box
-  2. Add these insights (format with percentages):
-     - "Champions represent X% of customers but generate Y% of revenue"
-     - "At-Risk customers: Z customers showing declining patterns"
-     - "Lost customers: A% of original base"
-     - "New customer retention rate: B%"
+**By end of Week 2:**
+- ✅ RFM_Calculations table working
+- ✅ All score columns (R, F, M) calculated
+- ✅ 7 segments identified
+- ✅ Final relationship created
 
-- [ ] Create Recommendations Table
-  1. Segment | Issue | Action | Expected Impact
-  2. Champions | Churn risk | VIP program | Retain 95%+
-  3. Loyal | Growth opportunity | Cross-sell | +15% AOV
-  4. At-Risk | Declining activity | Win-back campaign | Recover 30%
-  5. Lost | Inactive | Reactivation | Win back 10%
-  6. New | Prove value | Onboarding email | 50% retention
-  7. Etc.
+**By end of Week 3:**
+- ✅ 15+ measures created
+- ✅ All measures tested
+- ✅ Measures organized in folders
 
-- [ ] Add Drill-through setup (Optional but impressive)
-  1. Create new page "Customer Details Drill-through"
-  2. Add Visual filters: Customer ID
-  3. Add visuals: Customer history, purchases, etc.
-  4. On previous pages: Right-click data point → drill-through
-
-**Deliverables:**
-- ✅ Insights page created
-- ✅ Key metrics highlighted
-- ✅ Recommendations table added
-- ✅ Drill-through functionality (if included)
-
-**Time Check:** Finish by Day 25 EOD
+**By end of Week 4:**
+- ✅ Complete dashboard with 6-8 visuals
+- ✅ Formatted and professional looking
+- ✅ All interactions working
+- ✅ Project documented
 
 ---
 
-### Days 26-28: Formatting & Polish
-**Time Allocation:** 5-7 hours
+## 🚨 KEY REMINDERS
 
-**Tasks:**
-- [ ] Overall formatting
-  1. Consistent color scheme across all pages
-  2. Use segment colors: Champions (Gold), Loyal (Blue), At-Risk (Red), etc.
-  3. Fonts: Segoe UI size 11 body, 14 titles
-  4. All visuals have clear titles
-  5. Remove default visual labels where cluttered
+**1. NO CUSTOMER TABLE!**
+- Customer data is IN Orders table
+- Customer ID is in Orders[Customer ID]
+- RFM_Calculations is created FROM Orders
 
-- [ ] Add navigation
-  1. Create buttons for page navigation
-  2. Add "Home" button on each page
-  3. Add "Next" and "Previous" buttons
-  4. Use consistent placement (top corners)
+**2. ONLY 5 TABLES TOTAL**
+- Orders (from dataset)
+- People (from dataset)
+- Returns (from dataset)
+- DateTable (you create)
+- RFM_Calculations (you create)
 
-- [ ] Performance check
-  1. Refresh all data
-  2. Check load time for each page (<3 seconds)
-  3. Test all slicers
-  4. Test all drill-throughs
-  5. Close/reopen file to confirm save
+**3. VERIFY AS YOU GO**
+- After each DAX formula, check results
+- Test measures in visuals immediately
+- Save your .pbix file frequently
 
-- [ ] Mobile layout
-  1. View → Mobile layout
-  2. Adjust for mobile viewing
-  3. Stack visuals vertically
-  4. Keep slicers accessible
-
-- [ ] Add visual consistency
-  1. All card backgrounds same color
-  2. All table borders consistent
-  3. All chart colors match palette
-  4. Legend placement consistent
-
-**Deliverables:**
-- ✅ Professional color scheme applied
-- ✅ Navigation buttons added
-- ✅ Performance optimized
-- ✅ Mobile layout created
-- ✅ All formatting consistent
-
-**Time Check:** Finish by Friday EOD
-
-**End of Week 4 Checklist:**
-- ✅ 5 complete dashboard pages
-- ✅ 20+ visualizations
-- ✅ Advanced features (trends, insights)
-- ✅ Professional formatting
-- ✅ Navigation system
-- ✅ Performance optimized
-- ✅ Dashboard production-ready
+**4. COMMON PITFALLS**
+- ❌ Looking for Customer table (doesn't exist)
+- ❌ Creating 6 tables (only need 5)
+- ❌ Wrong column references
+- ❌ Not testing formulas before moving on
 
 ---
 
-## WEEK 5: Deployment & Documentation
+## 📚 RESOURCES
 
-### Days 29-30: Publish & GitHub Setup
-**Time Allocation:** 3-4 hours
+**DAX Help:**
+- DAX Formatter: https://www.daxformatter.com/
+- DAX Guide: https://dax.guide/
 
-**Tasks:**
-- [ ] Save Power BI file locally
-  1. File → Save
-  2. Name: "Customer_Segmentation_RFM_Dashboard.pbix"
-  3. Save to project folder
+**Power BI Help:**
+- Official Docs: https://docs.microsoft.com/power-bi/
+- Community: https://community.powerbi.com/
 
-- [ ] Publish to Power BI Service
-  1. File → Publish
-  2. Select workspace
-  3. Wait for upload (2-5 minutes)
-  4. Open in web (https://app.powerbi.com)
-
-- [ ] Setup GitHub repository
-  1. Create /Documentation folder
-  2. Create /Screenshots folder
-  3. Create /Data folder
-
-- [ ] Add files to GitHub
-  1. Upload Dashboard file (.pbix)
-  2. Upload Dataset (or link to Kaggle)
-  3. Upload documentation files
-
-**Deliverables:**
-- ✅ Power BI file saved locally
-- ✅ Dashboard published to Power BI Service
-- ✅ GitHub repo structured
-- ✅ All files uploaded
-
-**Time Check:** Finish by Day 30 EOD
+**Dataset:**
+- Kaggle: https://www.kaggle.com/datasets/apoorvaappz/global-super-store-dataset
 
 ---
 
-### Days 31-32: Documentation & README
-**Time Allocation:** 3-4 hours
-
-**Tasks:**
-- [ ] Create comprehensive README.md
-  1. Project overview
-  2. Dataset description
-  3. Key findings
-  4. Technical stack
-  5. How to use
-  6. Screenshot gallery
-  7. Contact info
-
-- [ ] Create DAX Guide (copy from provided DAX-Formulas.md)
-
-- [ ] Create RFM Methodology Guide
-  1. Explain RFM concept
-  2. Show scoring logic
-  3. Segment definitions
-
-- [ ] Add screenshot gallery
-  1. Take screenshots of each page
-  2. Save as PNG in /Screenshots
-  3. Reference in README
-
-- [ ] Create blog post (optional)
-  1. Write 300-500 word summary
-  2. Key insights
-  3. Technical approach
-  4. Post on LinkedIn
-
-**Deliverables:**
-- ✅ README.md complete
-- ✅ DAX guide uploaded
-- ✅ RFM methodology documented
-- ✅ Screenshots added
-- ✅ Professional presentation ready
-
-**Time Check:** Finish by Day 32 EOD
-
----
-
-### Days 33-35: Testing & Final Tweaks
-**Time Allocation:** 4-5 hours
-
-**Tasks:**
-- [ ] Final testing
-  1. Open dashboard in Power BI Service
-  2. Test all slicers
-  3. Test all drill-throughs
-  4. Test on mobile view
-  5. Check load times
-
-- [ ] Bug fixes
-  1. Fix any broken visuals
-  2. Update any incorrect formulas
-  3. Adjust formatting if needed
-
-- [ ] Create test data checklist
-  - [ ] Total customers: ~10K ✓
-  - [ ] Total orders: ~50K ✓
-  - [ ] Revenue range: $X - $Y ✓
-  - [ ] Date range: 2012-2015 ✓
-  - [ ] Segments: 7 types present ✓
-  - [ ] Top segment: Champions ✓
-
-- [ ] Final LinkedIn post
-  1. Write professional post
-  2. Mention key metrics
-  3. Add dashboard screenshot
-  4. Include project link
-  5. Tag CDAC and relevant people
-
-- [ ] Update resume
-  1. Add project section
-  2. 3-4 bullet points
-  3. Include link to GitHub
-  4. Mention key metrics/skills
-
-**Deliverables:**
-- ✅ All testing completed
-- ✅ Dashboard bug-free
-- ✅ Documentation finalized
-- ✅ LinkedIn post published
-- ✅ Resume updated
-
-**Time Check:** Finish by Friday EOD
-
----
-
-## 🎯 Project Completion Milestone
-
-**By end of Week 5, you will have:**
-
-✅ Complete RFM Analysis Dashboard with 5 pages  
-✅ 20+ interactive visualizations  
-✅ Professional formatting and navigation  
-✅ Published to Power BI Service  
-✅ GitHub repository with documentation  
-✅ LinkedIn post highlighting project  
-✅ Updated resume with project details  
-
----
-
-## 📊 Success Metrics
-
-**Dashboard Quality:**
-- ✅ All 5 pages loading within 3 seconds
-- ✅ All visualizations displaying correctly
-- ✅ All slicers/filters functional
-- ✅ Mobile layout responsive
-- ✅ Zero error messages
-
-**Data Quality:**
-- ✅ RFM scores validated
-- ✅ Segment distribution reasonable
-- ✅ No null values in key columns
-- ✅ Date ranges correct
-- ✅ Revenue totals match source
-
-**Documentation Quality:**
-- ✅ README comprehensive
-- ✅ All DAX formulas documented
-- ✅ Methodology clear
-- ✅ Screenshots professional
-- ✅ GitHub repo organized
-
----
-
-## 🎓 Skills Demonstrated
-
-After completing this project, you can confidently say:
-
-**Technical Skills:**
-- ✅ Power BI Desktop (data modeling, visualization)
-- ✅ Power Query (ETL, data transformation)
-- ✅ DAX (50+ formulas, complex calculations)
-- ✅ Data Relationships & star schema
-- ✅ Dashboard Design & UX
-
-**Business Skills:**
-- ✅ RFM Analysis methodology
-- ✅ Customer segmentation
-- ✅ Churn prediction & retention
-- ✅ Business intelligence
-- ✅ Data-driven insights
-
-**Soft Skills:**
-- ✅ Project management
-- ✅ Documentation
-- ✅ Presentation
-- ✅ Problem-solving
-- ✅ Communication
-
----
-
-## 🚀 Interview Questions You'll Be Ready For
-
-1. "Walk us through your RFM analysis project"
-   - Explain segmentation methodology
-   - Show dashboard
-   - Discuss business insights
-
-2. "How did you calculate RFM scores?"
-   - Show DAX formulas
-   - Explain scoring logic
-   - Discuss edge cases
-
-3. "What insights did you gain?"
-   - 45% revenue from 18% champions
-   - At-risk customer identification
-   - Churn prediction
-
-4. "What was challenging?"
-   - DAX formula optimization
-   - Handling large datasets
-   - Mobile responsiveness
-
-5. "How would you enhance this?"
-   - ML for churn prediction
-   - Real-time data refresh
-   - Automated alerts
-
----
-
-## 💡 Pro Tips for Success
-
-1. **Commit daily** to GitHub - Shows progress
-2. **Test as you go** - Don't leave testing to end
-3. **Take screenshots** - Document each milestone
-4. **Save backups** - Cloud storage + external drive
-5. **Share progress** - Post on LinkedIn weekly
-6. **Ask for feedback** - Share with peers/mentors
-7. **Iterate quickly** - Fix issues immediately
-8. **Document thoroughly** - Future you will thank you
-
----
-
-## 📞 Need Help?
-
-**Common Issues & Solutions:**
-
-**Q: Dashboard is slow**
-- A: Reduce visual count, use aggregations, optimize DAX
-
-**Q: Formulas showing blanks**
-- A: Check data types, verify relationships, test with simple formula first
-
-**Q: Segments not appearing**
-- A: Verify RFM_Calculations table, check segment formula, ensure all scores exist
-
-**Q: GitHub won't accept .pbix file**
-- A: File is large (~50MB+), add to .gitignore, link to cloud storage instead
-
-**Q: Mobile layout looks bad**
-- A: Go to View → Mobile layout, reorganize visuals vertically, simplify slicers
-
----
-
-**You've got this! 💪 Follow this roadmap week-by-week and you'll have an amazing portfolio project.**
-
-**Good luck! 🚀**
+**Follow this week-by-week roadmap exactly as written. By Day 28, you'll have a complete, professional RFM Customer Segmentation Dashboard!** 🎉
